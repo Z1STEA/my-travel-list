@@ -22,7 +22,14 @@ function Form(props) {
       return;
     }
 
-    props.onAddItems(description, quantity);
+    const newItem = {
+      id: Date.now(),
+      description: description,
+      quantity: quantity,
+      packed: false,
+    };
+
+    props.onAddItems(newItem);
 
     setDescription("");
     setQuantity(1);
@@ -58,6 +65,12 @@ function Form(props) {
 }
 
 function Item(props) {
+  let textStyle = {};
+
+  if (props.item.packed) {
+    textStyle.textDecoration = "line-through";
+  }
+
   return (
     <li>
       <input
@@ -68,17 +81,12 @@ function Item(props) {
         }}
       />
 
-      <span
-        style={
-          props.item.packed
-            ? { textDecoration: "line-through" }
-            : {}
-        }
-      >
+      <span style={textStyle}>
         {props.item.quantity} {props.item.description}
       </span>
 
       <button
+        type="button"
         onClick={function () {
           props.onDeleteItem(props.item.id);
         }}
@@ -135,14 +143,7 @@ function Stats(props) {
 function App() {
   const [items, setItems] = useState(initialItems);
 
-  function handleAddItems(description, quantity) {
-    const newItem = {
-      id: Date.now(),
-      description: description,
-      quantity: quantity,
-      packed: false,
-    };
-
+  function handleAddItems(newItem) {
     setItems(function (previousItems) {
       return [...previousItems, newItem];
     });
